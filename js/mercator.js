@@ -727,12 +727,12 @@ function satellite() {
 	//drawParticle(perigee.x, perigee.y, perigee.z, 3, "50, 255, 50");
 
 	//view = view + 2*Math.PI/1080;
-	xDir = new createVector([0, 0, 0],[xsunV, ysunV, zsunV,], 100, 1, [255, 0, 0]);
+	//xDir = new createVector([0, 0, 0],[xsunV, ysunV, zsunV,], 100, 1, [255, 0, 0]);
 	
 	points = Array();
 	for (i=0; i < activeSats.length; i++ ) points = points.concat(satOrbit[activeSats[i]]);
 	for (i=0; i < activeSats.length; i++ ) points = points.concat(satObj[activeSats[i]]);
-	points = points.concat(earthObj, longiObj, homeObj, horizonPoints, xDir.pts);
+	points = points.concat(earthObj, longiObj, homeObj, horizonPoints);
 	// Assign key (indices) to the objects for later re-ordering
 	for (i=0; i < points.length; i++ ) {
 		points[i].key = i; 

@@ -121,12 +121,13 @@
 
 
 <div class = "top">
+	The code for this web app is open source and can be found at: <a href="https://github.com/barolfe/satellites">https://github.com/barolfe/satellites</a><br>
 	Where are you?
 	<div class="minheight">
 		Longitude: <input id = "uLongi" class="coords" type="text" value="0.00"></input>
 		Latitude: <input id = "uLat" class="coords" type="text" value="0.00"></input>
 	</div>
-	Time Future <input id = "timeForward" class="coords" type="text" value="0.00"></input>
+	Time Future (debug mode): <input id = "timeForward" class="coords" type="text" value="0.00"></input>
 	<div id="activeSatellites" class="minheight">
 		<!-- This area is populated by user-selected active satellites -->
 	</div>
@@ -167,6 +168,7 @@
 			<p class="left"> Altitude:</p> <p id="altitude" class="right"></p>
 		</div>
 	</div>
+
 </div>
 
 
@@ -658,5 +660,3 @@ So look up every once in a while; next time you see a speck of light sailing thr
 
 </script>
 </html>
-
-i
