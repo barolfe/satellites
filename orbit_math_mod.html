@@ -1,0 +1,582 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+<title>Orbital Mechanics</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<script type="text/javascript" src="/js/SyntaxHighlighter/scripts/shCore.js"></script>
+<script type="text/javascript" src="/js/SyntaxHighlighter/scripts/shBrushJScript.js"></script>
+<script type="text/javascript" src="/js/SyntaxHighlighter/scripts/shBrushPhp.js"></script>
+<script type="text/javascript" src="/js/SyntaxHighlighter/scripts/shBrushXml.js"></script>
+
+<link type="text/css" rel="stylesheet" href="/js/SyntaxHighlighter/styles/shThemeDefault.css"/>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+<script type="text/JavaScript">
+function makeVisible(eleName) {
+	var ele = document.getElementById(eleName);
+	if (ele.style.display == 'none') {
+		ele.style.display = 'block';
+	} else {
+		ele.style.display = 'none';
+	}
+
+	return false; // Keeps the href link from going anywhere
+}
+
+function init() {
+		document.getElementById('ahint1').onclick = function() { return makeVisible('hint1') };
+		document.getElementById('ahint2').onclick = function() { return makeVisible('hint2') };
+		document.getElementById('ahint3').onclick = function() { return makeVisible('hint3') };
+}
+
+</script>
+<style class="text/css">
+td {
+	padding-left: 10px; 
+}
+
+body {
+	font-family: Helvetica; 
+	font-size: 12pt;
+	background-color: #FFFFFF;
+	color: #111111;
+}
+
+h1 {
+	font-size: 2.0em;
+}
+
+h2 {
+	font-size: 1.3em;
+}
+
+h3 {
+	font-size: 1.1em;
+}
+
+.header {
+	border-bottom: 1px solid #ddd;
+}
+
+.subText {
+	font-size: 0.8em;
+}
+.footer {
+	margin: 20px 0px auto;
+	padding: 10px 10px 0px 0px;
+	border-top: 1px solid #ddd;
+}
+
+#mainContainer {
+	margin: 0px 100px;
+}
+
+.tleInfo:hover {
+	color: #0000FF;
+}
+.normal {
+	color: #000000;
+	font-weight: none;
+}
+
+.highlight {
+	color: #0000FF;
+	font-weight: bold;
+}
+
+.orbitCanvas {
+	margin: 0px auto;
+	display: block;
+	float: left;
+}
+
+.orbitCanvas p {
+	text-align: center;
+}
+
+.centerCanvas {
+	margin: 0px auto;
+	display: block;
+}
+
+
+
+</style>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="/js/mathjax/MathJax.js?config=TeX-AMS_HTML-full"></script>
+
+</head>
+
+<body onload="init()">
+
+<div id = 'mainContainer'>
+
+<div class = 'header'>
+	<div id = "orbit_top"></div>
+	<div style="clear:both"></div>
+
+	<h1 style="text-align:center">The Keplar Orbit</h1>
+</div>
+
+<h2> An introduction </h2>
+<p>The two body problem in orbital mechanics can be readily solved given several assumptions are satisfied. Namely, we can usually ignore the influence of external forces (atmospheric drag, solar pressure, other bodies) and keep the problem classical. We also assume that our bodies are point-masses with perfectly uniform gravitational fields. These assumptions result in what is known as a Keplar Orbit. For short timescales, these assumptions are okay for most two-body problems. It is worth noting that external forces are non-zero for all Earth satellites, and are especially important for objects in low-Earth orbit. In fact, the International Space Station technically orbits within Earth's atmosphere, the Thermosphere, and requires periodic boosting to maintain its orbit. General relativity also plays an important role over long time scales, but I will leave these interesting tidbits for the reader's own exploration.
+</p>
+
+<p>
+A Keplar orbit of an object about another body can be fully defined with six quantities. These six values correspond to the six degrees of freedom in any orbit: position in space $\mathbf{r} = x, y, z$ and the velocity vector of the object $\mathbf{v} = v_x, v_y, v_z.$ In other words, if you fire a bullet parallel to the surface of the Earth, at a sufficient distance from the planet that the bullet would achieve orbit, then the orbit would be fully defined by your position, the orientation of the gun, and the muzzle velocity of the bullet. It will become more apparent why this is the case as we go through the derivation.
+</p>
+<h2>Formulating the problem </h2>
+$$ m \frac{d^2\mathbf{r}}{dt^2} = \mathbf{F}_G $$
+<p>
+Like any other force on a free body, the gravitational force $ \mathbf{F}_G $, affects a constant change in the velocity of our orbiting bodies. Here I am adopting <b>boldface</b> notation to signify vectors. 
+</p>
+<p>
+Our force is given to us by Newton's law of Gravitation. Again, we are dealing with classical mechanics, and this is more than sufficient for our purposes. In Newton's law, the gravitational force acts instantaneously along the unit vector connecting the centers of mass of our two bodies and has the form:
+</p>
+$$ \mathbf{F}_G = G \frac{m_1 m_2}{r^2} \mathbf{\hat{r}} $$
+<p>
+Thus, the acceleration of one body is awlays pointing towards the second body. In other words, the bodies are in freefall towards one another. For this reason, it's not uncommon for a satellite's orbit to be called an indefinite freefall around a planet. In fact, <em>this</em> is the reason why astronauts in orbit experience weightlessness -- because they are accelerating towards the Earth at a rate equal to the acceleration of gravity. It is a common misconception that astronauts in low-earth orbit experience weightlessness due to reduced gravity.
+</p>
+<p> 
+If we look at both our orbiting bodies separately, we know that they experience an equal, but opposite force:
+</p>
+
+<div style = "clear: top">
+<div id = "orbit_force"></div>
+
+
+$$ m_1 \frac{d^2\mathbf{r}_1}{dt^2} = - G \frac{m_1 m_2}{r^2} \mathbf{\hat{r}} $$
+
+$$ m_2 \frac{d^2\mathbf{r}_2}{dt^2} = G \frac{m_1 m_2}{r^2} \mathbf{\hat{r}} $$
+
+$$ \mathbf{\ddot{r}}_1 = -G\frac{m_2}{r^2} \mathbf{\hat{r}} $$
+
+$$ \mathbf{\ddot{r}}_2 = G\frac{m_1}{r^2} \mathbf{\hat{r}} $$
+
+And these equations can be conveninently combined to give us a single equation that describes the behavior of the vecor connecting the two bodies' centers of mass: 
+
+$$ \mathbf{\ddot{r}}_1 - \mathbf{\ddot{r}}_2 = \mathbf{\ddot{r}} = - G\frac{(m_2 + m_1)}{r^2} \mathbf{\hat{r}} $$
+
+$$ \frac{d^2\mathbf{r}}{dt^2} = - \frac{\mu}{r^2} \mathbf{\hat{r}} $$
+
+<h2> Solving </h2>
+
+Traditionally the sum of the masses and the gravitational constant are grouped into a single constant $ \mu = G(m_1 + m_2) $. Above is the equation we want to solve, but we're not quite ready to do so without one very important law of physics. Inertial bodies under a central constant force have a constant angular momentum. This is an observation that Keplar made with different wording: "A line joining a planet and the Sun sweeps out equal areas during equal intervals of time."
+
+$$ \mathbf{H} = \mathbf{r} \times \mathbf{\dot{r}}, \frac{d\mathbf{H}}{dt} = 0  $$
+
+And this fact (in ignorance of Keplar's laws) implies that our orbit lies in a plane defined by the position vector $\mathbf{r}$ and a normal vector parallel to $\mathbf{H}$ (e.g. $ \mathbf{\hat{n}} = \mathbf{H} /|\mathbf{H}| $).
+
+$$\frac{\mathbf{H}}{|\mathbf{H}|} \cdot (\mathbf{r} - \mathbf{r_0}) = 0$$
+
+<div id = "orbit_plane"></div>
+
+Using this result allows for a coordinate system change to one confined to the newly defined plane of our orbit. The most suitable would seem to be a cylindrical coordinate system defined by $r$ and $\theta$. We then have new basis vectors:
+
+$$ \mathbf{\hat{r}} = \mathbf{\hat{x}}cos\theta + \mathbf{\hat{y}}sin\theta $$
+$$ \mathbf{\hat{\theta}} = d\mathbf{\hat{r}}/d\theta = -\mathbf{\hat{x}}sin\theta + \mathbf{\hat{y}}cos\theta $$
+
+Upon substiting the appropriate quantities in the differential equation from above, we go from a cartesian coordinate system, to a cylindrical one defined in the plane normal to $\mathbf{H}$ with the origin being the center of mass of our two bodies (for artificial satellites around the Earth, this is essentially the center of mass of the Earth). 
+
+$$ \frac{d^2\mathbf{r}}{dt^2} = - \frac{\mu}{r^2} \mathbf{\hat{r}} \implies  \frac{d^2r}{dt^2} - r{\frac{d\theta}{dt}}^2 = - \frac{\mu}{r^2} \mathbf{\hat{r}} $$
+
+Unfortunately this non-ordinary non-linear differential equation is not convenient to solve. We will again take advantage of the conservation of angular momentum (manifested in Keplar's second law) to simplify this equation.
+
+$$ |\mathbf{H}| = H = r^2\frac{d\theta}{dt} $$ 
+
+Our time derivatives then become:
+
+$$ \frac{dr}{dt} = \frac{dr}{d\theta}\frac{d\theta}{dt} = \frac{dr}{d\theta}\frac{H}{r^2} $$
+$$ \frac{d^2r}{dt^2} = \frac{d^2r}{d\theta^2}\left(\frac{d\theta}{dt}\right)^2 + \frac{dr}{d\theta}\frac{d^2\theta}{dt^2} $$
+$$ = \frac{d^2r}{d\theta^2}\left(\frac{H}{r^2}\right)^2 + \frac{dr}{d\theta}\left(\frac{-2H}{r^3}\frac{dr}{d\theta}\right) $$
+
+Substituting these into our differential equation, we finally arrive at an second-order ordinary equation that we can solve:
+
+$$ \frac{d^2r}{d\theta^2}\left(\frac{H}{r^2}\right)^2 + \left(\frac{dr}{d\theta}\right)^2\left(\frac{-2H^2}{r^5}\right) - r\left(\frac{H}{r^2}\right)^2 = - \frac{\mu}{r^2} $$
+
+At this point I leave it to the reader to solve the equation and trust that, if reading this, they are more interested in the derivation than the solution. If all goes well, you will arrive at Keplar's famous equation describing the orbit(s) of a two-body system. Give it a shot first, and if you try and fail several times, you may find these hints helpful: <a id="ahint1" href="#">hint 1</a> <a id="ahint2" href="#">hint 2</a> 
+
+<div id="hint1" style="display: none">
+	<p>
+		<b>Hint 1:</b> Try a substitution that will reduce this nonlinear equation, to a linear one that can be solved. A good choice will elliminate the first-order differential term in the equation.
+	</p>
+</div>
+
+<div id="hint2" style="display: none">
+	<p>
+		<b>Hint 2:</b> Not sure which substitution to use? That's okay, try $ r = 1/s $ and you should be on the right path! If you want to check your work, you should end up with <a id="ahint3"href="#hint3">this:</a>
+	</p>
+	<div id="hint3" style="display:none"> $$ \frac{d^2s}{d\theta^2} + s = \frac{\mu}{H^2} $$ </div>
+</div>
+
+$$ r = \frac{H^2/\mu}{1+ e \cdot cos(\theta -\theta_0)} $$
+
+<p> 
+And that's it! If you're wondering what $e$ and $\theta_0$ are, they are constants of integration that depend on our initial state.
+</p>
+
+<div class="header">
+	<h1>Describing a Keplar Orbit</h1>
+</div>
+<p>
+<h2> Degrees of freedom </h2>
+We now have an expression that specifies the distance between our orbiting bodies as a function of the angle $\theta$. The constants that define the shape of the orbit are $H$, $e$, and $\theta_0$. The orientation of the orbit is specified by the vector $\mathbf{H}$, which gave us the plane to which we transformed our coordinate system. Since we know this plane passes through the center of mass of our two bodies, all we need to know is the direction of the normal vector, and therefore all we need are two angles in a spherical coordinate system. 
+</p>
+<p>
+To fully define an orbit, we then need only 5 values, since two are combined for us in constants. The values we need are $H$ (which is usually given as the mean motion) and gives us the length of our semi-major axis, the eccentricity $e$ which defines the shape of our orbit, $\theta_0$ which by convention is the point of periapsis (the argument of periapsis), and gives us our in-plane orientation, and finally we need the inclination and the right-ascension of the ascending node, which together define the out-of-plane orientation. 
+</p>
+<h3> Eccentricity </h3>
+<p> Here are three examples of orbits with identical semi-major axes, but different eccentricities. The last example would have quite an unfortunate outcome for our satellite </p>
+<div class = "orbitCanvas" id="orbit_e0"><p>eccentricity = 0 </p></div><div class = "orbitCanvas" id="orbit_e1"><p>eccentricity = 0.5 </p></div><div class = "orbitCanvas"  id="orbit_e2"><p>eccentricity = 0.9 </p></div>
+<div style="clear: both"></div>
+
+<h3> Inclination </h3>
+<p> Now we'll view our orbit from the elliptic plane (that's the plane that Earth orbits in), and we'll set our view so that the x-axis, going right, points to the vernal equinox (that's the line where equitorial and elliptic planes intersect). Even an equitorial orbit is inclined in this reference frame.
+
+<div class = "orbitCanvas"  id="orbit_i0"><p>inclination = 0$^\circ$</p></div><div class = "orbitCanvas" id="orbit_i1"><p>inclination = 23.3$^{\circ}$</p></div><div class = "orbitCanvas" id="orbit_i2"><p>inclination = 23.3$^{\circ}$, rotated view</p></div>
+<div style="clear: both"></div>
+
+<h3> Argument of periapsis </h3>
+<p> Now we have an orbit with eccentricity $ e = 0.5 $, an inclination of $23.3^{\circ}$. With this orbit we'll introduce the argument of periapsis. For circular orbits, periapsis and apoapsis are coincident everywhere along the orbit since there is no change in the orbit radius. For all real orbits though, these quantities will always be distinct and $ 180^{\circ} $ frome one another. The argument of periapsis tells us the orientation of the orbit in its plane by defining the point of periapsis as angle relative to the ascending node. Here are a few examples of identical orbits with different arguments of periapsis. </p>
+
+<div class = "orbitCanvas" id="orbit_aoP0"><p> AoP = -90$^\circ$</p> </div><div class = "orbitCanvas" id="orbit_aoP1"><p> AoP = 0$^\circ$</div><div class = "orbitCanvas" id="orbit_aoP2"><p> AoP = 90$^\circ$ </p></div>
+<div style="clear: both"></div>
+
+<h3> Right-ascension of the ascending node </h3>
+
+<p> I've conveniently chosen the center example for the last piece required to define our orbit. It's a convenient choice because the point of periapsis is exactly positioned at the ascending node, which is the point at which the satellite rises above the elliptic plane. The parameters we've given to define our orbit so far have left a rotation about the y-axis as a degree of freedom. To constrain the orbit, we need to define an angle, termed the right ascension of the ascending node, that orients this orbit around the y-axis.</p>
+<div class = "orbitCanvas" id="orbit_raA0"><p> RA Ascending = -90$^\circ$ </p></div><div class = "orbitCanvas" id="orbit_raA1"><p> RA Ascending = 0$^\circ$ </p></div><div class = "orbitCanvas" id="orbit_raA2"><p> RA Ascending = 90$^\circ$ </p></div>
+<div style="clear: both"></div>
+
+<h2> Placing the satellite </h2>
+
+<p> The last degree of freedom is the position of our satellite within the described orbit. Because most satellites are in stable orbits, we just need to know its position at some time. These values are usually given as the mean anomoly, which is always measured relative to the argument of periapsis, and a time that these values are valid, which is termed the epoch. Integrating forward in time is how we determine the present location of thes satellite. A first-order approximation requires only the mean-motion of the satellite, form which we can use what we know about a Keplar orbit to calculate the current position of the satellite. However, the higher-order terms become more important the further we deviate from the epoch. Thus, if we're using this approach, we want to update our orbital elements as frequently as possible.
+</p>
+
+<p>
+The way we communicate to the world precisely and completely where our satellites are is in <b>two-line element</b> sets. 
+</p>
+<div style="position:relative; font-family: monospace; left:50%; margin-left: -275px; width: 550px ">
+
+<p>
+ISS (ZARYA) <br>            
+1 25544U 98067A   <span id="epochYear">13</span><span id="epoch">317.75301506</span>  .00016868  00000-0  30145-3 0   123<br>
+2 25544  <span id="inclination">51.6492</span>  <span id="raAscending">87.3249</span> <span id="eccentricity">0001267</span> <span id="aoPerigee">115.4790</span> <span id="meanAnomoly">332.3792</span> <span id="meanMotion">15.50137778857907</span>
+</p>
+</div>
+<script type="text/javascript">
+eleEpochYear = document.getElementById('epochYear');
+eleEpoch = document.getElementById('epoch');
+eleInclination = document.getElementById('inclination');
+eleRaAscending = document.getElementById('raAscending');
+eleEccentricity = document.getElementById('eccentricity');
+eleAoPerigee = document.getElementById('aoPerigee');
+eleMeanAnomoly = document.getElementById('meanAnomoly');
+eleMeanMotion = document.getElementById('meanMotion');
+</script>
+
+<div style = "position: relative; width: 500px; left:50%; margin-left:-250px; ">
+<table>
+<tr>
+	<td> Column </td>
+	<td> Variable </td>
+	<td> Description </td>
+</tr>
+<tr>
+	<td>Line 1</td>
+</tr>
+<tr>
+	<td>19-20</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleEpochYear.className='highlight';" onmouseout="eleEpochYear.className ='normal';">Epoch Year</span>
+	</td>
+	<td>Last 2 digits of the epoch year</td>
+</tr>
+<tr>
+	<td>21-32</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleEpoch.className='highlight';" onmouseout="eleEpoch.className ='normal';">Epoch</span>
+	</td>
+	<td>Number of days since the start of the year</td>
+</tr>
+<td>Line 2</td>
+<tr>
+	<td>09-16</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleInclination.className='highlight';" onmouseout="eleInclination.className ='normal';">Inclination</span>
+	</td>
+	<td>radians</td>
+</tr>
+<tr>
+	<td>18-25</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleRaAscending.className='highlight';" onmouseout="eleRaAscending.className ='normal';">Right Ascension of the Ascending Node</span>
+	</td>
+	<td>degrees</td>
+</tr>
+<tr>
+	<td>27-33</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleEccentricity.className='highlight';" onmouseout="eleEccentricity.className ='normal';">Eccentricity</span>
+	</td>
+	<td>no units, leading decimal implied</td>
+</tr>
+<tr>
+	<td>35-42</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleAoPerigee.className='highlight';" onmouseout="eleAoPerigee.className ='normal';">Argument of Perigee (or periapsis)</span>
+	</td>
+	<td>degrees, relative to ascending node</td>
+</tr>
+<tr>
+	<td>44-51</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleMeanAnomoly.className='highlight';" onmouseout="eleMeanAnomoly.className ='normal';">Mean Anomoly</span>
+	</td>
+	<td>degrees, relative to periapsis</td>
+
+</tr>
+<tr>
+	<td>53-63</td>
+	<td>
+		<span class="tleInfo"  onmouseover="eleMeanMotion.className='highlight';" onmouseout="eleMeanMotion.className ='normal';">Mean Motion</span>
+	</td>
+	<td>revolutions/day</td>		
+</tr>
+</table>
+</div>
+<p>
+The table above summarizes the information needed to define the Keplar orbit as well as the satellite's position in that orbit. The TLE data also includes some parameters I won't be discussing, but will only mention that these are used for models that account for some of the assumptions we made and are called simplified perturbations models. These "SPM" models are beyond the scope of this article and we'll leave those for another day. 
+</p>
+
+<h2> Types of Geocentric Orbits (interesting orbits) </h2>
+<p>
+	Orbital scientists, like most scientists, like to categorize and name things -- orbits of satellites around Earth not exempt. The two that are most familiar are the Low Earth Orbit (LEO) and the Geostationary Orbit (GEO). These are aguably the most well known because that's where the vast majority of our spacecraft reside. However, there are other classes of orbits that each have their own characteristics that make them uniquely suited for space-borne communication, science, and surveillance.
+</p>
+<h3> Low Earth Orbit (LEO & MEO) </h3>
+<p>
+	Low Earth Orbits are classified by their maximum altitude above the Earth (apogee). To be considered a LEO orbit, this altitude must be less than 2,000 km. Low Earth Orbits require the least energy to achieve, and are therefore popular for economical reasons. The LEO space also offers several advantages. The low altitude affords superb imagery opportunities for spy/commercial satellites, low energy and low latency for communications, and the ease of supply operations from Earth. These orbits also traverse the Earth, as they all have orbital periods shorter than the length of a day. For these reasons, some opertors choose to have a constellation of a large number of smaller satellites working together for regional coverage, rather than using more energy (money) to acheive geosynchronous orbits. 
+</p>
+<p>
+	Low Earth Orbit is also home to the International Space Station (ISS), presently the only permanent home to humans in space. Since the ISS requires constant resupply and crew changes, LEO is a good place to call home, since the energy requirements to achieve this orbit are minimal. Interestingly, the ISS orbits within the Earth's atmosphere (the thermosphere), and experiences drag from its large surfaces. This highlights one of the drawbacks to the LEO space: these orbits decay at a greater rate than higher orbits, and require more agressive station-keeping (e.g. periodic boosts). 
+</p>
+<p>
+	It is worth noting that most human experiences in space have occurred in LEO, and all human space travel in the last 4 decades has been in LEO. These orbits are so close to Earth that the difference in the force of gravity as compared to the surface of the Earth is marginal (about 90% for the ISS). So yes, one would weigh less, but one would not be weightless. The reason humans on the ISS appear weightless is because they are in free fall towards the Earth. All orbits, by definition, are free falls toward Earth. An orbit that intersects the Earth's surface is called a ballistic trajectory. If you jump from where you are now, you will be weightless on your ballistic trajectory until your feet hit the ground again. 
+</p>
+<h3> Geosynchronous Orbit (GEO) </h3>
+<p>
+	Any orbit that has a period that is precisely the same as one sidereal day (the time it days for the earth to make one rotation in reference to the fixed stars -- about 6 minutes shy of a solar day) is termed a Geosynchronous Orbit. It does not have to be circular, and there are a number of important examples of highly elliptical geosynchronous orbits. because the orbital period matches the rate of rotation of the Earth, the path the satellite traces over the ground, or the ground track, is always the same, and generally only over a small region of the Earth. 
+</p>
+<p>
+	A <b> Geostationary Orbit (GSO)</b> is a special case of the Geosynchronous Orbit. A Geostationary Orbit is circular and aligned with the equator (0 degrees inclination). Many important communications and GPS satellites adopt this orbit because it fixes the satellite over one point on the ground at all times, and also gives the satellite a wide view of the Earth's surface, because of its high altitude (a radius of 42,164 km). 
+</p>
+<p> 
+	Some of the more interesting ground tracks are traced by satellites in synchronous and semi-synchronous orbits. For synchronous orbits, the ground track will trace a fgiure-8 pattern over the surface of the Earth, the size of this pattern corresponding to the satellite's inclination, and the assymetry of this figure-8 being related to the satellites eccentricity. This type of pattern actually has a name, too, and is called an analemma. This is the same type of pattern the sun traces in the sky, if its position were recorded at the same time, every day, for a year. Again, a geostationary orbit is a special case of the geosynchronous orbit, with 0 inclination and 0 eccentricity. 
+</p>
+
+<p> 
+	Non-stationary geosynchronous orbits have value in that they can provide regional coverage to an areas at higher latitudes. Communications or GPS satellites in geostationary orbits are only of value if they can be seen by a receiver on the ground. Near the equator, this is less of a problem, as the satellite will always be near the zenith. The further from the equator, though, the lower on the horizon the satellites apepar. Objects (e.g. buildings and terrain) are theremore more likely to come between a receiver and a satellite at higher latitudes. The QZS satellites operatred by Japan aim to solve this problem for the city canyon that is Tokyo. These satellites [will] operate in a constellation of 3, each having a highly eccentric, slightly inclined orbit, with their arguments of periapsis and right ascensions separated by 120 degrees. The inclination and eccentricity of these orbits work together in such a way that the satellites spend the majority of their orbital period near the Zenith over Japan -- the remainder of the time is spent over Australia as the satellite traces a very assymetric analemma. The separation of the satellites assures there are, at all times, at least two QZS satellites over Japan. 
+</p>
+<h3> Tundra Orbit </h3>
+<h3> Molniya Orbit </h3>
+<p>
+	Molniya orbits are highly inclined semi-synchronous orbits. These orbits are named after the Russian satellites of the same name. Semi-synchronous here means that these orbits have periods of one half of a sidereal day. A satellite in this orbit therefore oscillates between two hemispheres (east-west oriented) over the course of two sidereal days. Many of these satellites will spend one day over the Russian Federation, and the next day over North America. These orbits are also highly inclined (63.4 degrees to offset perturbations from the equatorial bulging of the Earth) and highly eccentric (they are at apogee over their desired region of use). Russia and the USA use this orbit for survellience and threat detection purposes but mostly for communications. 
+</p>
+<p>
+	As far as communications are concerned, these orbits are desired for the some of same reasons tundra orbits are used. In particular, Russia employed the orbit because of its high latitude, and range of latitudes. Of course, a constellation of satellites is required since these satellites spend at least half their time out of view of their target region. Offseting this somewhat is that it's considerably cheaper to reach an orbit near the latitude of the launch facility. Inclination maneuvers are amongst the most expensive orbital maneuvers. 
+</p>
+<p> 
+	Molniya orbits have some of the more aesthetically interesting ground tracks. Their exact shape depends on the inclination eccentricity, and argument of periapsis. 
+</p>
+<h3> Sunsynchronous Orbit </h3>
+<p>
+	Among the more exotic of orbits are those that fall into the category of sunsynchronous. These are orbits such that the satellite always passes over a given geographic location at the same time of day (and this is true for all points on Earth it overflies). Whereas the Molniya orbits are inclined precisely to negate the perturbations caused by the equatorial bulge, sunsynchronous orbits require this pertubation. Most orbits are thought of as fixed elliptical tracks in space, but in truth, all satellites require station-keeping to maintain these orbits, and often station-keeping is employed to counteract gravitational pertubations. However, orbits can be calculated that offer the satellite a precesion in the right ascension of about 1 degree per day, or 360 degrees per year. Hence, as the Earth orbits the sun, the satellite's orbit always remains the same relative to the sun, but rotates with reference to the fixed stars.
+</p>
+<o> 
+	Sunsynchronous orbits are retrograde (orbit opposite to the direction in whcih the Earth rotates) with inclinations around 98 degrees. Hence, these orbits are expensive as they get no "boost" from the rotation of the Earth, and in fact, have to work against that initial velocity. However, these orbits are well-suited for imaging applications where having the sun in the same position for each photo is desirable. 
+</p>
+<p> 
+	A special type of sunsynchronous orbit is the dawn-to-dusk orbit, where the satellite hugs the twilight boundary where night meets day. One advantage of such an orbit is that the satellite is constantly illuminated.
+</p>
+
+<h3> Polar Retrograde Orbit </h3>
+
+
+
+<h2> The code </h2>
+
+<p>
+I'll tell you right now that you've already read the interesting bits. If you want to know more about <em>my</em> implementation of a satellite tracking system, or you want to learn about the standard in which satellite orbit information is communicated (and all the other nitty gritty details) then by all means, please read on!
+</p>
+
+<p> TLE sets are released daily by NORAD and distributred by NASA. My server-side code grabs these datasets from <a href="http://www.celestrak.com/">celestrak.com</a>, which is also a wealth of information.
+</p>
+
+<pre class="brush: php; toolbar: false">
+<?php
+	$TLEData1 = file_get_contents('http://celestrak.com/NORAD/elements/stations.txt');
+	$TLEData2 = file_get_contents('http://www.celestrak.com/NORAD/elements/visual.txt');
+	$TLEData3 = file_get_contents('http://www.celestrak.com/NORAD/elements/molniya.txt');
+?>
+</pre>
+<p> I had originally planned to handle all calculations on the backend using Python, and possibly the quite appropriate ephem library, but to keep the resource interactive and independent of server-side code, I decided to implement all calculations in JavaScript from scratch. 
+</p>
+<p>Since JavaScript is doing all the heavy lifting, I needed a way to communicate information from an off-server resource (celestrak) to the JavaScript code. JavaScript prohibits these sorts of requests by design as a security feature. To get around this limitation, I injected the TLE data into an invisible HTML element on the page. 
+</p>
+<pre class="brush: php; toolbar: false">
+<div id="TLEData" style="display: none;"><?php echo $TLEData1 ?><?php echo $TLEData2; echo $TLEData3; ?></div>
+</pre>
+<p>
+	After that, it's straightforward to have JavaScript get the contents of this HTML element using standard methods to create an object from the HTML element and pulling contents.
+</p>
+
+<p>When I originally started building this method, I was determined to implement everything in a 2D canvas for compatibility reasons. I later discovered the svg element in HTML5, and may port my code to use these elements instead as they preserve handles to the objects that are drawn. </p>
+
+<p>Because the objects I wanted to work with are inheritently 3-dimensional, and I am given a 2-dimensional canvas to work with, all 3D effects would have to be the result of projections from 3D to 2D. The code calculates all positions in 3D, and then projects these onto the x-y axis whenever objects are rendered. I've chosen my canvas to be coincident with the x-y plane in the coordiante system I am using. This means my projection is trivial and the z-coordinate is discarded. However, we utilize the z-coordinate to employ some perspective effects to give our canvas some depth. In particular, object size and opacity are adjusted linearly such that objects close to the "camera" are large and opaque, where as objects far away are small and faded. </p>
+
+<pre class="brush: js; toolbar: false">
+function drawParticle(context, xp, yp, zp, r, red, green, blue) {
+
+	alpha = (zp + maxDepth)/(2*maxDepth);
+	if (alpha < 0) 
+		alpha = 0;
+
+	context.fillStyle = "rgba(" + red + "," + green + "," + blue + "," + alpha +")";
+	context.beginPath();
+	context.arc(xp, yp, 0.1*r + 3*alpha*r, 0, 2*Math.PI);
+	context.closePath();
+	context.fill();
+
+}
+</pre>
+
+<p>Projections are easy to do, but all drawing has to occur in a 2D environment. We can draw various built-in shapes, as well as bezier curves and any path defined by a set of points. To draw the projection of an ellipse, we either need a way to define it analytically, or to break it up into a finite set of points that are straightforward to project. The latter is much easier to implement and can be applied to any shaped object. Thus, all objects are comprised of many points that are draw individually.</p>
+
+<p>Although what I have described so far will produce the illusion of 3D, it is missing something very important. When objects are drawn on a 2D canvas in HTML5, new objects will lay over the top of existing objects. Although this doesn't matter when objects of a single color, shape, and size are being rendered, it certainly does matter when I want to produce the illusion of a satellite passing behind say, the Earth. Thus, we need to draw our objects in order of increasing z-coordinate to ensure depth is captured correctly. Hence, when objects are sent to be rendered, they are combined into a single array and sorted by their z-coordinate. Fortunately, sorting algorithms are very efficient, but it's still something I would rather avoid in a future implementation. </p>
+
+<pre class="brush: js; toolbar: false">
+function renderObjs(orbitCanvas, objs) {
+
+	// 'zoom' property -- a simple scaling proerty
+	var zm = 1;
+	var context = orbitCanvas.context;
+	var xc = orbitCanvas.xc;
+	var yc = orbitCanvas.yc;
+	var view = orbitCanvas.view;
+	var trans = view.trans;
+
+	xc = xc + trans[0];
+	yc = yc - trans[1];
+
+	if (typeof view.zoom !== 'undefined') {
+		zm = view.zoom;
+	}
+
+	// simpe view rotation on all particles
+	for (var i=0; i < objs.length; i++) {
+		rotateParticle(objs[i], 0, view.y, 0)
+		rotateParticle(objs[i], view.x, 0, 0)
+	}
+
+	// sort particles by z for proper depth rendering
+	objs.sort(zCompare);
+
+	for (var i=0; i < objs.length; i++) {
+		// the y-value is flipped because the canvas coordinate
+		// system has its orgin in the top-left
+		drawParticle(context, zm*objs[i].x + xc, yc- zm*objs[i].y, zm*objs[i].z, zm*objs[i].r, objs[i].red, objs[i].green, objs[i].blue);
+	}
+
+	// reutrn our object array to its original state
+	objs.sort(function(a,b) { return (a.key - b.key) });
+
+	for (var i=0; i < objs.length; i++) {
+	 	rotateParticle(objs[i], -view.x, 0, 0)
+	 	rotateParticle(objs[i], 0, -view.y, 0)	
+	}
+
+}
+</pre>
+
+<pre class="brush: js; toolbar: false">
+function rotateParticle(pObj, xtheta, ytheta, ztheta) {
+
+	var xOld = pObj.x;
+	var yOld = pObj.y;
+	var zOld = pObj.z;
+
+	pObj.x = xOld*Math.cos(ztheta) - yOld*Math.sin(ztheta);
+	pObj.y = xOld*Math.sin(ztheta) + yOld*Math.cos(ztheta);
+
+	xOld = pObj.x;
+	yOld = pObj.y;
+	zOld = pObj.z;
+
+	pObj.x =  xOld*Math.cos(ytheta) + zOld*Math.sin(ytheta);
+	pObj.z = -1*xOld*Math.sin(ytheta) + zOld*Math.cos(ytheta);
+
+	xOld = pObj.x;
+	yOld = pObj.y;
+	zOld = pObj.z;
+
+	pObj.y = yOld*Math.cos(xtheta) - zOld*Math.sin(xtheta);
+	pObj.z = yOld*Math.sin(xtheta) + zOld*Math.cos(xtheta);
+
+}
+</pre>
+
+<pre class="brush: js; toolbar: false">
+function createOrbit(eccentricity, aoPerigee, inclination, raAscending, radius, numCircle, rgb) {
+	// Orbit points
+	var orbit 		= Array();
+	var	aEllipse 	= 1;
+	var bEllipse 	= aEllipse * Math.sqrt(1 - eccentricity*eccentricity);
+	var f 			= Math.sqrt(aEllipse*aEllipse - bEllipse*bEllipse);  // distance from center of ellipse to focci
+
+	aEllipse = radius * aEllipse;
+	bEllipse = radius * bEllipse;
+	f        = radius * f;
+
+	for (var i=0; i < numCircle; i++) {
+
+		theta = (i/numCircle)*Math.PI*2;
+		orbit[i] = {x: aEllipse*Math.cos(theta) + f, y: 0, z: bEllipse*Math.sin(theta), r: 1, red: rgb[0], green: rgb[1], blue: rgb[2]};
+
+		rotateParticle(orbit[i], 0, aoPerigee - 3 * Math.PI/2, 0)
+		rotateParticle(orbit[i], 0, 0, inclination);
+		rotateParticle(orbit[i], 0, raAscending, 0);
+
+	}
+
+	var perigee = {x: aEllipse*Math.cos(Math.PI) + f, y: 0, z: bEllipse*Math.sin(Math.PI), r: 1, red: rgb[0], green: rgb[1], blue: rgb[2]};
+		rotateParticle(perigee, 0, aoPerigee - 3 * Math.PI/2, 0)
+		rotateParticle(perigee, 0, 0, inclination);
+		rotateParticle(perigee, 0, raAscending, 0);
+
+	var apogee = {x: aEllipse*Math.cos(0) + f, y: 0, z: bEllipse*Math.sin(0), r: 1, red: rgb[0], green: rgb[1], blue: rgb[2]};
+		rotateParticle(apogee, 0, aoPerigee - 3 * Math.PI/2, 0)
+		rotateParticle(apogee, 0, 0, inclination);
+		rotateParticle(apogee, 0, raAscending, 0);
+
+	return [orbit, perigee, apogee];
+}
+</pre>
+<div class = "footer">
+Bryan Andrew Rolfe 2013
+</div>
+</div> <!-- mainContainer -->
+
+</body>
+
+<script type = "text/javascript" src="js/orbit.js"></script>
+
+</html>
