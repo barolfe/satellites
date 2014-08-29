@@ -121,7 +121,6 @@
 
 
 <div class = "top">
-	The code for this web app is open source and can be found at: <a href="https://github.com/barolfe/satellites">https://github.com/barolfe/satellites</a><br>
 	Where are you?
 	<div class="minheight">
 		Longitude: <input id = "uLongi" class="coords" type="text" value="0.00"></input>
@@ -168,6 +167,10 @@
 			<p class="left"> Altitude:</p> <p id="altitude" class="right"></p>
 		</div>
 	</div>
+	<br>
+	The code for this web app is open source and can be found at: <a href="https://github.com/barolfe/satellites">https://github.com/barolfe/satellites</a><br>
+	<br>
+	<a href="./orbit_types.html">Want to know about some interesting geocentric orbits?</a>
 
 </div>
 
@@ -211,13 +214,44 @@ To me, the sight of the ISS passing overhead affects a profound sense of humilit
 <p>
 So look up every once in a while; next time you see a speck of light sailing through the night sky, take a pause from the stress and uncertainty of life. You are witness to one of humankind’s greatest accomplishments: an orbiting testament to our ingenuity, our progress, and our potential as a species.
 </p>
-<p style="text-align:center">Bryan Rolfe 2013 - bar72 [at] cornell.edu </p>
+<p style="text-align:center">Bryan Rolfe 2014 - bar72 [at] cornell.edu </p>
 <p style="text-align:center">Two-line element data from: <a href="http://www.celestrak.com/">Celestrak</a> </p>
 
 </div>
 
-
 <script type="text/javascript" src="js/mercator.js"></script>
+
+<script type="text/javascript">
+	function getUrlVars() {
+	  var vars = {};
+	  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	    vars[key] = value.replace("_"," ");
+	  });
+	  return vars;
+	}
+
+	var overrideSat = getUrlVars()["sat"];
+
+	console.log(TLEobjs);
+	if (overrideSat) {
+		pattern = RegExp(overrideSat);
+		var newSat = 0;
+		var cnt = 0;
+		while (newSat == 0) {
+			if (pattern.test(TLEobjs[cnt].name)) {
+				console.log(TLEobjs[cnt].name)
+				newSat = cnt;
+			}
+			cnt = cnt + 1; 
+		}
+		console.log(TLEobjs[newSat])
+		activeSats.remove(currentSat);
+					currentSat = newSat;
+					activeSats.remove(currentSat); // If it exists, remove it to avoid duplicates
+					activeSats.push(currentSat); 
+					satInfo[currentSat] = new setSatellite(TLEobjs[currentSat]); 
+	}
+</script>
 
 <script type="text/javascript">
 
@@ -464,9 +498,9 @@ So look up every once in a while; next time you see a speck of light sailing thr
 	    //console.log("Active satellites:", activeSats.length, activeSats)
 	    if (activeSats.length > 1) {
 	    	//console.log("Sat Info: ", satInfo[activeSats[activeSats.length - 1]]);
-	    	testOrbit = propagateOrbit(satInfo[activeSats[activeSats.length - 1]], 2*200, 2);
+	    	selectedOrbit = propagateOrbit(satInfo[activeSats[activeSats.length - 1]], 2*200, 2);
 	    } else {
-	    	testOrbit = propagateOrbit(satInfo[activeSats[0]], 2*200, 2);
+	    	selectedOrbit = propagateOrbit(satInfo[activeSats[0]], 2*200, 2);
 	    }
 
 	    var sunPixels = Array();
@@ -506,7 +540,7 @@ So look up every once in a while; next time you see a speck of light sailing thr
 
 	    horizonPixels = Array()
 	    for (i = 0; i < horizonLatLon.length; i ++ ) {
-	    	lonCorrected = correctLongitude(testOrbit[0].t, horizonLatLon[i].lon);
+	    	lonCorrected = correctLongitude(selectedOrbit[0].t, horizonLatLon[i].lon);
 	    	horizonPixels[i] = {x: toXPixels(lonCorrected, xZero),
 	    					y: toYPixels(mercate2(horizonLatLon[i].lat), yZero, S)};
 
@@ -517,15 +551,15 @@ So look up every once in a while; next time you see a speck of light sailing thr
 	    orbitPixels = Array();
 	    latLon = Array();
 
-	    for (i = 0; i < testOrbit.length; i ++ ) {
+	    for (i = 0; i < selectedOrbit.length; i ++ ) {
 
-	    	lonCorrected = correctLongitude(testOrbit[i].t, Math.atan2(testOrbit[i].x, testOrbit[i].z));
+	    	lonCorrected = correctLongitude(selectedOrbit[i].t, Math.atan2(selectedOrbit[i].x, selectedOrbit[i].z));
 	    	//console.log("Longitude correction: ", rotEquinox, rotEquinox % (2 * Math.PI), lonCorrection, lonCorrection - Math.PI, (lonCorrection - Math.PI) % (-2*Math.PI), (lonCorrection - Math.PI) % (-2*Math.PI) + Math.PI)
-	    	//console.log("Orbit time:", testOrbit[i].t, vernalEquinox)
+	    	//console.log("Orbit time:", selectedOrbit[i].t, vernalEquinox)
 
-	    	d = norm([testOrbit[i].x, testOrbit[i].y, testOrbit[i].z]);
+	    	d = norm([selectedOrbit[i].x, selectedOrbit[i].y, selectedOrbit[i].z]);
 	    	latLon[i] = {lon: lonCorrected ,
-						 lat: Math.PI/2 - Math.acos(testOrbit[i].y / d )};
+						 lat: Math.PI/2 - Math.acos(selectedOrbit[i].y / d )};
 
 			orbitPixels[i] = {x: toXPixels(latLon[i].lon, xZero),
 	    					y: toYPixels(mercate2(latLon[i].lat), yZero, S)};
